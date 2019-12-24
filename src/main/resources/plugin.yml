@@ -1,0 +1,6 @@
+name: UIKit
+main: dev.reactant.uikit.UIKit
+version: 0.1.6
+api-version: 1.14
+depend:
+  - Reactant
