@@ -11,7 +11,9 @@ import java.io.FileWriter
 /**
  * A item resource which is
  */
-open class SegmentedItemResource(override val identifier: String, val segmentImageFile: File, val segmentCol: Int, val zIndex: Double, override val baseItem: Material) : ItemResource {
+open class SegmentedItemResource(override val identifier: String, val segmentImageFile: File, val segmentCol: Int,
+                                 override val baseItem: Material,
+                                 val displayPosition: ItemModel.DisplayPosition) : ItemResource {
     override var allocatedCustomModelData: Int? = null;
     override val baseResource: ItemResource? = null
     override val predicate: Map<String, Any> = mapOf()
@@ -36,16 +38,7 @@ open class SegmentedItemResource(override val identifier: String, val segmentIma
                 layer0 = "stirred:\${dir}/${segmentImageFile.nameWithoutExtension}"
             }
             display {
-                gui {
-                    rotation(0.0, 0.0, 0.0)
-                    when (segmentCol) {
-                        0 -> translation(18.0, 0.0, zIndex)
-                        1 -> translation(72.0, 18.0, zIndex)
-                        2 -> translation(-18.0, 18.0, zIndex)
-                        else -> throw IllegalStateException();
-                    }
-                    scale(3.4, 3.4, 1.0)
-                }
+                gui = displayPosition
             }
         }
     }

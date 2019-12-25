@@ -7,6 +7,4 @@ import java.awt.image.BufferedImage
 interface ResourceSegments : Iterable<SegmentedItemResource> {
     val identifier: String
     val originalImage: BufferedImage
-    val size: Int
-
 }

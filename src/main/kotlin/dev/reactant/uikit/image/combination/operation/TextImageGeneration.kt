@@ -38,14 +38,14 @@ class TextImageGeneration(var text: String) : TextureGeneration {
             dispose()
         }
 
-        val icon = ImageIcon(outputImage)
-        val frame = JFrame()
-        frame.layout = FlowLayout()
-        frame.setSize(200, 300)
-        val lbl = JLabel()
-        lbl.icon = icon
-        frame.add(lbl)
-        frame.isVisible = true
+//        val icon = ImageIcon(outputImage)
+//        val frame = JFrame()
+//        frame.layout = FlowLayout()
+//        frame.setSize(200, 300)
+//        val lbl = JLabel()
+//        lbl.icon = icon
+//        frame.add(lbl)
+//        frame.isVisible = true
 
         val outputFile = File(path)
         outputFile.parentFile.let { if (!it.exists()) it.mkdirs() }
