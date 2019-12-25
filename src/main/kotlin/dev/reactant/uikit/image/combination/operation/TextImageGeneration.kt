@@ -15,7 +15,7 @@ import javax.swing.JLabel
 
 class TextImageGeneration(var text: String) : TextureGeneration {
     override fun writeTextureFiles(path: String) {
-        val width = 64*3;
+        val width = 64 * 3;
         val height = 64;
         val outputImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         outputImage.createGraphics().apply graphics@{
@@ -47,6 +47,8 @@ class TextImageGeneration(var text: String) : TextureGeneration {
         frame.add(lbl)
         frame.isVisible = true
 
-        ImageIO.write(outputImage, "png", File(path))
+        val outputFile = File(path)
+        outputFile.parentFile.let { if (!it.exists()) it.mkdirs() }
+        ImageIO.write(outputImage, "png", outputFile)
     }
 }

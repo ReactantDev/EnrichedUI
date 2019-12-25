@@ -1,8 +1,10 @@
 package dev.reactant.uikit.image.segmentation.container
 
 import dev.reactant.resourcestirrer.resourceloader.ClassLoaderResourceLoader
+import dev.reactant.resourcestirrer.table.ItemResourcesTable
 import dev.reactant.uikit.UIKit
 import dev.reactant.uikit.image.segmentation.SegmentedItemResource
+import org.bukkit.Material
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -11,23 +13,25 @@ import javax.imageio.ImageIO
 /**
  * The image will be divided into equal parts using grid
  * @param identifier The identifier prefix of divided segments resource
- * @param imagePath The path of image in jar resources
+ * @param searchAt The path of image in jar resources
  * @param rows Total number of rows to be divided
  * @param cols Total number of cols to be divided
  */
-abstract class EqualPartsResourceSegments protected constructor(
+class EqualPartsResourceSegments constructor(
+        private val resourceLoader: ClassLoaderResourceLoader,
+        private val searchAt: String,
         override val identifier: String,
-        private val imagePath: String,
         override val rows: Int,
-        override val cols: Int
+        override val cols: Int,
+        val resourceZIndex: Double = -10.0,
+        val baseItem: Material = Material.GLASS_PANE
 ) : GridResourceSegments {
-    private val resourceLoader = ClassLoaderResourceLoader(this.javaClass.classLoader)
 
     override val gridSegments: List<List<SegmentedItemResource>> = breakIntoSegments();
 
     override val originalImage: BufferedImage
-        get() = (resourceLoader.getResourceFile("$imagePath.png")
-                ?: throw IllegalStateException("Frame background image cannot be loaded: ${this.javaClass.canonicalName} : $imagePath.png"))
+        get() = (resourceLoader.getResourceFile("$searchAt.png")
+                ?: throw IllegalStateException("Frame background image cannot be loaded: ${this.javaClass.canonicalName} : $searchAt.png"))
                 .use { ImageIO.read(it) }
 
     override val size: Int
@@ -41,8 +45,8 @@ abstract class EqualPartsResourceSegments protected constructor(
 
         val imageWidth = originalImage.width
         val imageHeight = originalImage.height
-        check(imageWidth % cols == 0) { "Image width (${imageWidth}px) cannot be divided by ${cols}: ${this.javaClass.canonicalName} : $imagePath" }
-        check(imageHeight % rows == 0) { "Image height (${imageHeight}px) cannot be divided by segment amount (${rows}): ${this.javaClass.canonicalName} : $imagePath" }
+        check(imageWidth % cols == 0) { "Image width (${imageWidth}px) cannot be divided by ${cols}: ${this.javaClass.canonicalName} : $searchAt" }
+        check(imageHeight % rows == 0) { "Image height (${imageHeight}px) cannot be divided by segment amount (${rows}): ${this.javaClass.canonicalName} : $searchAt" }
         val segmentWidth = imageWidth / cols
         val segmentHeight = imageHeight / rows
 
@@ -57,8 +61,14 @@ abstract class EqualPartsResourceSegments protected constructor(
                         val segmentImageFile = File("${cacheFolder.absolutePath}/${identifier}.png");
                         ImageIO.write(originalImage.getSubimage(x, y, segmentWidth, segmentHeight), "png", segmentImageFile);
 
-                        SegmentedItemResource(identifier, segmentImageFile, col);
+                        SegmentedItemResource(identifier, segmentImageFile, col, resourceZIndex, baseItem);
                     }
                 }
     }
 }
+
+fun ItemResourcesTable.equalPartsSegments(searchAt: String, identifier: String?,
+                                          rows: Int, cols: Int,
+                                          resourceZIndex: Double = -10.0,
+                                          baseItem: Material = Material.GLASS_PANE) =
+        EqualPartsResourceSegments(this.resourceLoader, searchAt, "${this.identifierPrefix}-$identifier", rows, cols, resourceZIndex, baseItem)

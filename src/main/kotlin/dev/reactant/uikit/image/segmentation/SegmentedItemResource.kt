@@ -11,9 +11,8 @@ import java.io.FileWriter
 /**
  * A item resource which is
  */
-open class SegmentedItemResource(override val identifier: String, val segmentImageFile: File, val segmentCol: Int) : ItemResource {
+open class SegmentedItemResource(override val identifier: String, val segmentImageFile: File, val segmentCol: Int, val zIndex: Double, override val baseItem: Material) : ItemResource {
     override var allocatedCustomModelData: Int? = null;
-    override val baseItem: Material? get() = Material.GLASS_PANE
     override val baseResource: ItemResource? = null
     override val predicate: Map<String, Any> = mapOf()
     override fun writeModelFile(path: String) {
@@ -40,9 +39,9 @@ open class SegmentedItemResource(override val identifier: String, val segmentIma
                 gui {
                     rotation(0.0, 0.0, 0.0)
                     when (segmentCol) {
-                        0 -> translation(18.0, 0.0, -10.0)
-                        1 -> translation(72.0, 18.0, -10.0)
-                        2 -> translation(-18.0, 18.0, -10.0)
+                        0 -> translation(18.0, 0.0, zIndex)
+                        1 -> translation(72.0, 18.0, zIndex)
+                        2 -> translation(-18.0, 18.0, zIndex)
                         else -> throw IllegalStateException();
                     }
                     scale(3.4, 3.4, 1.0)
