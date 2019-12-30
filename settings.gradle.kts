@@ -1,1 +1,1 @@
-rootProject.name = "ui-kit"
+rootProject.name = "enriched-ui"

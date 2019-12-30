@@ -17,7 +17,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("org.jetbrains.dokka") version "0.10.0"
 }
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -29,19 +28,22 @@ tasks.withType<KotlinCompile> {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
     maven { url = URI.create("https://hub.spigotmc.org/nexus/content/repositories/snapshots") }
+    maven { url = URI.create("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = URI.create("https://oss.sonatype.org/content/repositories/snapshots/") }
 }
 
 dependencies {
     compileOnly(kotlin("stdlib-jdk8", kotlinVersion))
+
     compileOnly("dev.reactant:reactant:0.1.6-SNAPSHOT")
     compileOnly("dev.reactant:resource-stirrer:0.1.6-SNAPSHOT")
+    compileOnly("dev.reactant:mechanism:0.1.6-SNAPSHOT")
+
     compileOnly("org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT")
 }
-
-
 
 val dokka = (tasks["dokka"] as DokkaTask).apply {
     outputFormat = "html"
@@ -114,8 +116,8 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git@gitlab.com:reactant/uikit.git")
-                    url.set("https://gitlab.com/reactant/uikit/")
+                    connection.set("scm:git:git@gitlab.com:reactant/enriched-ui.git")
+                    url.set("https://gitlab.com/reactant/enriched-ui/")
                 }
 
                 developers {
