@@ -12,7 +12,6 @@ import picocli.CommandLine
 )
 internal class EnrichedUICommand : ReactantCommand() {
     override fun run() {
-        if (sender !is ConsoleCommandSender) sender.sendMessage("Only console can use this command")
-        else showUsage()
+        showUsage()
     }
 }
