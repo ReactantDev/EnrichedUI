@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import kotlin.math.roundToInt
 
-typealias LayeredTextures = Map<Int, String>
+typealias LayeredTextures = Map<String, String>
 
 class EnrichedUISimpleProgressBarStyle(
         val resourceLoader: ClassLoaderResourceLoader,
@@ -28,7 +28,7 @@ class EnrichedUISimpleProgressBarStyle(
                             it.key,
                             "$identifier-$position-${it.value.map { it.key }.min()}",
                             baseItem, null, mapOf())
-                            .applyModifier(ItemModelModifiers.scaleBySlotSize(1.0, 1.0))
+                            .applyModifier(ItemModelModifiers.scaleAsGUI(1.0, 1.0))
                 }
             }
             .flatten()
@@ -88,7 +88,7 @@ class EnrichedUISimpleProgressBarStyle(
         }
 
 
-        fun getClosest(wanted: Int, map: Map<Int, Map<Int, String>>): LayeredTextures = map.entries.sortedBy { it.key }.run {
+        fun getClosest(wanted: Int, map: Map<Int, LayeredTextures>): LayeredTextures = map.entries.sortedBy { it.key }.run {
             (firstOrNull { it.key >= wanted } ?: last()).value
         }
         return when {
@@ -118,9 +118,9 @@ fun ItemResourcesTable.createSingleLayerTextureProgressBar(
         baseItem: Material = Material.RED_STAINED_GLASS_PANE,
         layerIndex: Int = 0
 ) = EnrichedUISimpleProgressBarStyle(this.resourceLoader, "${this.identifierPrefix}-$identifier",
-        head.mapValues { mapOf(layerIndex to it.value) },
-        middle.mapValues { mapOf(layerIndex to it.value) },
-        tail.mapValues { mapOf(layerIndex to it.value) }, baseItem)
+        head.mapValues { mapOf("layer$layerIndex" to it.value) },
+        middle.mapValues { mapOf("layer$layerIndex" to it.value) },
+        tail.mapValues { mapOf("layer$layerIndex" to it.value) }, baseItem)
 
 /**
  * Multi layer texture progress bar

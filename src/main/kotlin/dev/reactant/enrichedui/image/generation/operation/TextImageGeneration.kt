@@ -1,9 +1,9 @@
 package dev.reactant.enrichedui.image.generation.operation
 
-import dev.reactant.resourcestirrer.table.ItemResourcesTable
 import dev.reactant.enrichedui.image.generation.GeneratedItemResourceSegments
 import dev.reactant.enrichedui.image.segmentation.splitting.ItemResourceSegmentsLayout
 import dev.reactant.enrichedui.image.segmentation.splitting.SegmentsLayout
+import dev.reactant.resourcestirrer.table.ItemResourcesTable
 import org.bukkit.Material
 import java.awt.Color
 import java.awt.Font
@@ -19,27 +19,26 @@ class TextImageGeneration(
         val height: Int
 ) : TextureGeneration {
 
-    override val generatedTexture: BufferedImage
-        get() = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).also {
-            it.createGraphics().apply graphics@{
-                //                color = Color.WHITE
-//                fillRect(0, 0, width, height);
-                color = Color.BLACK
+    override val generatedTextureLayers: Map<String, BufferedImage>
+        get() = mapOf(
+                "layer0" to BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).also {
+                    it.createGraphics().apply graphics@{
+                        color = Color.BLACK
 
+                        setRenderingHints(mapOf<RenderingHints.Key, Any>(
+                                RenderingHints.KEY_ANTIALIASING to RenderingHints.VALUE_ANTIALIAS_ON,
+                                RenderingHints.KEY_TEXT_ANTIALIASING to RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+                        ));
 
-                setRenderingHints(mapOf<RenderingHints.Key, Any>(
-                        RenderingHints.KEY_ANTIALIASING to RenderingHints.VALUE_ANTIALIAS_ON,
-                        RenderingHints.KEY_TEXT_ANTIALIASING to RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-                ));
+                        TextLayout(text, font, fontRenderContext).run {
+                            color = Color.BLACK
+                            draw(this@graphics, 0f, fontMetrics.ascent.toFloat() + 28)
+                        }
 
-                TextLayout(text, font, fontRenderContext).run {
-                    color = Color.BLACK
-                    draw(this@graphics, 0f, fontMetrics.ascent.toFloat() + 28)
+                        dispose()
+                    }
                 }
-
-                dispose()
-            }
-        }
+        )
 }
 
 fun ItemResourcesTable.generateText(

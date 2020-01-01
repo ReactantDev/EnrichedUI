@@ -7,6 +7,7 @@ import java.io.File
 
 interface ResourceSegments : Iterable<SegmentedItemResource> {
     val identifier: String
-    val originalImage: BufferedImage
+    //    val originalImage: BufferedImage
+    val layersImage: Map<String, BufferedImage>
     val animationMetaFile: File?
 }

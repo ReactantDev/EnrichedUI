@@ -9,7 +9,7 @@ import dev.reactant.resourcestirrer.table.ResourcesTable
 object UniversalResourceTable : ItemResourcesTable("dev.reactant.enriched.universal") {
     val VERSION_BOARD = byClassLoaderSegments("version_info", "version-info", 9, 6)
 
-    object PROGRESS_BAR : ItemResourcesGroup(tableHeader, "progress-bar") {
+    object PROGRESS_BAR : ItemResourcesGroup(this, "progress-bar") {
         val SIMPLE = createColorableProgressBar("simple",
                 (1..19).map { it to "progress_bar/progress_bar_1/0/progress_bar_1_$it" }.toMap(),
                 (14..35).map { it to "progress_bar/progress_bar_1/1/progress_bar_1_$it" }.toMap(),

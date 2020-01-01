@@ -1,8 +1,8 @@
 package dev.reactant.enrichedui.image.segmentation.splitting
 
-import dev.reactant.resourcestirrer.model.ItemModel
 import dev.reactant.enrichedui.EnrichedUI
 import dev.reactant.enrichedui.image.segmentation.SegmentedItemResource
+import dev.reactant.resourcestirrer.model.ItemModel
 import org.bukkit.Material
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
@@ -40,19 +40,27 @@ abstract class ItemResourceSegments : GridResourceSegments {
         val cacheFolder = File("${EnrichedUI.configFolder}/.cache");
         if (!cacheFolder.exists()) cacheFolder.mkdirs()
 
-        val imageWidth = originalImage.width
+        layersImage.values.groupBy { "${it.width}x${it.height}" }.let {
+            assert(it.size > 1) {
+                "Segmenting texture layers must have same width and height, " +
+                        "but $identifier is not"
+            }
+            assert(it.isNotEmpty()) { "Segmenting texture layers must have at least 1 layer, but $identifier is not" }
+        }
+
+        val imageWidth = layersImage.values.first().width
         val imageWidthPerSlot = imageWidth / cols
         val segmentWidth = imageWidthPerSlot * 3
 
 
-        val imageHeight = originalImage.height
+        val imageHeight = layersImage.values.first().height
         val segmentHeight = segmentWidth
 
         // a texture width height scale should be equal
         val msgFormat = "        %15s: %s \n"
         fun imageInformation(): String = String.format(msgFormat, "identifier", identifier) +
-                String.format(msgFormat, "image size", "${originalImage.width} x ${originalImage.height}") +
-                String.format(msgFormat, "expected size", "${originalImage.width} (fixed, base on width) x N(${imageWidthPerSlot * rows}) , while N is frame amount ") +
+                String.format(msgFormat, "image size", "${imageWidth} x ${imageHeight}") +
+                String.format(msgFormat, "expected size", "${imageWidth} (fixed, base on width) x N(${imageWidthPerSlot * rows}) , while N is frame amount ") +
                 String.format(msgFormat, "rows and cols", "$rows x $cols") +
                 String.format(msgFormat, "needed segments", "rows: $totalSegmentRows, cols: $totalSegmentCols") +
                 String.format(msgFormat, "segment size", "$segmentHeight x $segmentWidth")
@@ -90,37 +98,41 @@ abstract class ItemResourceSegments : GridResourceSegments {
                     val segmentImageWidth = segmentSlotsWidth * imageWidthPerSlot
                     val segmentImageHeight = segmentSlotsHeight * imageWidthPerSlot
 
-                    fun getFrameSubImage(animatedFrameIndex: Int): BufferedImage {
-                        return originalImage.getSubimage(segmentImageX,
-                                segmentImageY + frameAtImageYShift * animatedFrameIndex,
-                                segmentImageWidth, segmentImageHeight)
-                    }
+                    val outputImageFiles = hashMapOf<String, File>()
 
-
-                    val identifier = "ui-frame-${identifier}-${row}-${col}";
-
-                    val outputImage = BufferedImage(segmentWidth, segmentHeight * animationFrames, BufferedImage.TYPE_INT_ARGB)
-
-                    outputImage.createGraphics().run {
-                        setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                        setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                        setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                        (0 until animationFrames).forEach { frameIndex ->
-                            val takingImage = getFrameSubImage(frameIndex)
-                            // although take a smaller image, but to force to match 3x3 size image
-                            // so each frame start at segmentHeight * frameIndex, instead of segmentImageHeight
-                            drawImage(takingImage, 0, segmentHeight * frameIndex, null)
+                    val segmentIdentifier = "${identifier}-${row}-${col}";
+                    layersImage.forEach { (layerKey, texture) ->
+                        fun getFrameSubImage(animatedFrameIndex: Int): BufferedImage {
+                            return texture.getSubimage(segmentImageX,
+                                    segmentImageY + frameAtImageYShift * animatedFrameIndex,
+                                    segmentImageWidth, segmentImageHeight)
                         }
-                        dispose()
-                    }
 
-                    val outputImageFile = File("${cacheFolder.absolutePath}/${identifier}.png");
-                    ImageIO.write(outputImage, "png", outputImageFile);
+
+                        val outputImage = BufferedImage(segmentWidth, segmentHeight * animationFrames, BufferedImage.TYPE_INT_ARGB)
+
+                        outputImage.createGraphics().run {
+                            setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                            setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                            setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+                            (0 until animationFrames).forEach { frameIndex ->
+                                val takingImage = getFrameSubImage(frameIndex)
+                                // although take a smaller image, but to force to match 3x3 size image
+                                // so each frame start at segmentHeight * frameIndex, instead of segmentImageHeight
+                                drawImage(takingImage, 0, segmentHeight * frameIndex, null)
+                            }
+                            dispose()
+                        }
+
+                        val outputImageFile = File("${cacheFolder.absolutePath}/$segmentIdentifier-$layerKey.png");
+                        ImageIO.write(outputImage, "png", outputImageFile);
+                        outputImageFiles[layerKey] = outputImageFile
+                    }
 
                     layout.getSegmentsTranslation(this, SegmentInfo(col, row,
                             segmentSlotsWidth, segmentSlotsHeight)).let {
                         val segmentedItemResource = SegmentedItemResource(
-                                identifier, outputImageFile, animationMetaFile, baseItem,
+                                segmentIdentifier, outputImageFiles, animationMetaFile, baseItem,
                                 it.displayPosition.also {
                                     it.translation = it.translation!!
                                             .mapIndexed { index, value -> value + globalTranslation[index] }

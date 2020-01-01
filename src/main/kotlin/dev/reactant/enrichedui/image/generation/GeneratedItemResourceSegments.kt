@@ -1,8 +1,8 @@
 package dev.reactant.enrichedui.image.generation
 
 import dev.reactant.enrichedui.image.generation.operation.TextureGeneration
-import dev.reactant.enrichedui.image.segmentation.splitting.ItemResourceSegmentsLayout
 import dev.reactant.enrichedui.image.segmentation.splitting.ItemResourceSegments
+import dev.reactant.enrichedui.image.segmentation.splitting.ItemResourceSegmentsLayout
 import dev.reactant.enrichedui.image.segmentation.splitting.SegmentsLayout
 import org.bukkit.Material
 import java.awt.image.BufferedImage
@@ -18,8 +18,8 @@ open class GeneratedItemResourceSegments(override val identifier: String,
 ) : ItemResourceSegments() {
 
 
-    override val originalImage: BufferedImage
-        get() = textureGeneration.generatedTexture
+    override val layersImage: Map<String, BufferedImage>
+        get() = textureGeneration.generatedTextureLayers
     override val animationMetaFile: File?
         get() = null
 

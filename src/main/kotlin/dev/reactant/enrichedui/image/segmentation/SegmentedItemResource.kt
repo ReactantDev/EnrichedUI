@@ -11,7 +11,8 @@ import java.io.FileWriter
 /**
  * A item resource which is
  */
-open class SegmentedItemResource(override val identifier: String, val segmentImageFile: File,
+open class SegmentedItemResource(override val identifier: String,
+                                 val segmentImageLayersFile: Map<String, File>,
                                  val animationMetaFile: File?,
                                  override val baseItem: Material,
                                  val displayPosition: ItemModel.DisplayPosition) : ItemResource {
@@ -24,11 +25,13 @@ open class SegmentedItemResource(override val identifier: String, val segmentIma
     }
 
     override fun writeTextureFiles(path: String) {
-        segmentImageFile.inputStream().use {
-            it.outputTo(File("$path/${segmentImageFile.name}"))
+        segmentImageLayersFile.forEach { (layerKey, file) ->
+            file.inputStream().use {
+                it.outputTo(File("$path-$layerKey.png"))
+            }
         }
         animationMetaFile?.inputStream()?.use {
-            it.outputTo(File("$path/${segmentImageFile.name}.mcmeta"))
+            it.outputTo(File("$path-layer0.png.mcmeta"))
         }
     }
 
@@ -38,8 +41,11 @@ open class SegmentedItemResource(override val identifier: String, val segmentIma
 
     private fun generateItemModel(): ItemModel {
         return ItemModel().apply {
+            parent = "item/generated"
             textures {
-                "layer0"("stirred:{{prefix}}/${segmentImageFile.nameWithoutExtension}")
+                segmentImageLayersFile.keys.forEach {
+                    it("{{prefix}}-$it")
+                }
             }
             display {
                 gui = displayPosition
