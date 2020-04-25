@@ -1,11 +1,11 @@
 package dev.reactant.enrichedui.element.progress
 
-import dev.reactant.resourcestirrer.itemresource.ClassLoaderItemResource
-import dev.reactant.resourcestirrer.itemresource.ItemModelModifiers
+import dev.reactant.reactant.ui.kits.progress.ProgressBarRenderInfo
+import dev.reactant.reactant.ui.kits.progress.ProgressBarTheme
 import dev.reactant.resourcestirrer.resourceloader.ClassLoaderResourceLoader
+import dev.reactant.resourcestirrer.resourcetype.item.ClassLoaderItemResource
+import dev.reactant.resourcestirrer.resourcetype.item.ItemModelModifiers
 import dev.reactant.resourcestirrer.table.ItemResourcesTable
-import dev.reactant.uikit.element.progress.ProgressBarRenderInfo
-import dev.reactant.uikit.element.progress.ProgressBarTheme
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import kotlin.math.roundToInt

@@ -1,6 +1,6 @@
 name: EnrichedUI
 main: dev.reactant.enrichedui.EnrichedUI
-version: 0.1.6
+version: 0.1.7
 api-version: 1.15
 depend:
   - Reactant

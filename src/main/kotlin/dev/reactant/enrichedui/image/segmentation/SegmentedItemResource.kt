@@ -1,8 +1,8 @@
 package dev.reactant.enrichedui.image.segmentation
 
 import com.google.gson.Gson
-import dev.reactant.resourcestirrer.itemresource.ItemResource
 import dev.reactant.resourcestirrer.model.ItemModel
+import dev.reactant.resourcestirrer.resourcetype.item.ItemResource
 import dev.reactant.resourcestirrer.utils.outputTo
 import org.bukkit.Material
 import java.io.File
