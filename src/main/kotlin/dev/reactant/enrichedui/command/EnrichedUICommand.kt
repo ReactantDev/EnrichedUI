@@ -11,7 +11,7 @@ import picocli.CommandLine
         description = []
 )
 internal class EnrichedUICommand : ReactantCommand() {
-    override fun run() {
+    override fun execute() {
         showUsage()
     }
 }

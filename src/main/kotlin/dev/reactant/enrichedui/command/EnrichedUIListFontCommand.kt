@@ -12,7 +12,7 @@ import java.awt.GraphicsEnvironment
         description = ["List all available system fonts name"]
 )
 internal class EnrichedUIListFontCommand : ReactantCommand() {
-    override fun run() {
+    override fun execute() {
         if (sender !is ConsoleCommandSender) sender.sendMessage("Only console can use this command")
         else GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames().forEach { stdout.out(it) }
     }

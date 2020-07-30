@@ -14,7 +14,7 @@ import picocli.CommandLine
         description = ["Show a colorful version info <3"]
 )
 internal class EnrichedUIVersionInfoCommand(val uiService: ReactantUIService) : ReactantCommand() {
-    override fun run() {
+    override fun execute() {
         if (sender !is Player) sender.sendMessage("Only player is our target user... :C")
         else uiService.createUI(sender as Player, "Reactant Enriched UI Info") {
             view.setCancelModificationEvents(true)
