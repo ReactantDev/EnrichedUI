@@ -40,9 +40,11 @@ dependencies {
 
     compileOnly("dev.reactant:reactant:0.2.0-SNAPSHOT")
     compileOnly("dev.reactant:resource-stirrer:0.2.0-SNAPSHOT")
-//    compileOnly("dev.reactant:mechanism:0.1.6-SNAPSHOT")
+    api("org.apache.xmlgraphics:batik-svg-dom:1.13")
+    api("org.apache.xmlgraphics:batik-transcoder:1.13")
 
     compileOnly("org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT")
+    implementation(kotlin("script-runtime"))
 }
 
 val dokka = (tasks["dokka"] as DokkaTask).apply {

@@ -1,7 +1,7 @@
 package dev.reactant.enrichedui.command
 
 import dev.reactant.enrichedui.element.frame.bgFrame
-import dev.reactant.enrichedui.universal.UniversalResourceTable
+import dev.reactant.enrichedui.EnrichedUIResourceTable
 import dev.reactant.reactant.extra.command.ReactantCommand
 import dev.reactant.reactant.ui.ReactantUIService
 import org.bukkit.entity.Player
@@ -18,7 +18,7 @@ internal class EnrichedUIVersionInfoCommand(val uiService: ReactantUIService) : 
         if (sender !is Player) sender.sendMessage("Only player is our target user... :C")
         else uiService.createUI(sender as Player, "Reactant Enriched UI Info") {
             view.setCancelModificationEvents(true)
-            bgFrame(UniversalResourceTable.VERSION_BOARD) {
+            bgFrame(EnrichedUIResourceTable.VERSION_BOARD) {
 
             }
         }

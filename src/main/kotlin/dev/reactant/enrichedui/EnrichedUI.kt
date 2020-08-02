@@ -14,5 +14,4 @@ class EnrichedUI : JavaPlugin() {
 
         const val configFolder = "plugins/EnrichedUI/";
     }
-
 }
